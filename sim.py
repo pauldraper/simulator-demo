@@ -27,17 +27,37 @@ class Scheduler:
 class TimeoutException(Exception):
 	"""Thrown when timeout is needed."""
 	def __init__(self, timeout):
-		self.timeout = timeout
-		
+		self.timeout = timeout	
 def sleep(timeout):
 	"""Sleep for timeout."""
 	raise TimeoutException(timeout)
 	return #In Python 3.3, simply use `yield from iter(())`
 	yield
 
+class WaitException(Exception):
+	"""Thrown when wait is needed."""
+	def __init__(self, lock):
+		self.lock = lock
+def wait(lock):
+	raise WaitException(lock)
+	return #In Python 3.3, simply use `yield from iter(())`
+	yield
+	
+class ResumeException(Exception):
+	"""Thrown when wait is needed."""
+	def __init__(self, lock):
+		self.lock = lock
+def resume(lock):
+	raise ResumeException(lock)
+	return #In Python 3.3, simply use `yield from iter(())`
+	yield
+
+def create_lock():
+	return []
+
 class Simulator:
 	"""Controls function calls and flow."""
-			
+
 	def __init__(self):
 		"""Creates a new Simulator."""
 		self.scheduler = Scheduler()
@@ -61,8 +81,14 @@ class Simulator:
 			self.__proceed(stack, e.args)
 		except TimeoutException as e:
 			self.scheduler.add(self.__proceed, (stack,), e.timeout)
+		except WaitException as e:
+			e.lock.append(stack)
+		except ResumeException as e:
+			stacks, e.lock = e.lock, []
+			for stack in stacks:
+				self.__proceed(stack)
 		else:
-			stack.append(next_call)	
+			stack.append(next_call)
 			self.__proceed(stack)
 
 simulator = Simulator() #singleton

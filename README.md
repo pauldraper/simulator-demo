@@ -35,6 +35,22 @@ To have the current "thread" sleep, use the non-instantaneous `sim.sleep(timeout
         for _ in xrange(10):
             print simulator.scheduler.get_time()
             yield sleep(1000)
+            
+To have one thread wait on another (think Java's wait() and notifiy()), use `sim.create_lock()`,
+`sim.wait(lock)`, and `sim.resume(lock)`. For example,
+
+    from sim import create_lock, resume, wait
+    
+    lock = create_lock()
+    
+    def f():
+    	print 'Waiting'
+    	yield wait(lock)
+    	print 'Done waiting'
+    
+    def g():
+   		print 'Releasing lock'
+   		yield resume(lock)
 
 A new thread may be spawned from any function by passing `sim.simulator.new_thread()` a
 non-instantaneous function.
