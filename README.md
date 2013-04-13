@@ -12,17 +12,14 @@ functions can only be called by other non-instantaneous function. All functions 
 non-instantaneous, if desired.
 
 (1) Instantaneous - Define these functions as you would normally.
- 
 ```python
 def harmonic_mean(*numbers):
     return len(numbers) / sum(map(lambda x: 1/x, numbers))
 ```
 
-
 (2) Non-instantaneous - Define a generator instead of a function. To make other calls to
 non-instantaneous function, use `yield`. You may also use `yield` to collect the return value of
 the call. Return values as normal. (As usual, no return value returns `None`.)
-
 ```python
 def accept_one_conn(socket):
     socket1 = yield socket.accept()
@@ -33,7 +30,6 @@ def accept_one_conn(socket):
 ```
 
 To have the current "thread" sleep, use the non-instantaneous `sim.sleep(timeout)`:
-
 ```python
 from sim import simulator, sleep
 def print_times():
@@ -44,7 +40,6 @@ def print_times():
             
 To have one thread wait on another (think Java's wait() and notifiy()), use `sim.create_lock()`,
 `sim.wait(lock)`, and `sim.resume(lock)`. For example,
-
 ```python
 from sim import create_lock, resume, wait
 
@@ -61,12 +56,11 @@ def g():
 ```
 
 A new thread may be spawned from any function by passing `sim.simulator.new_thread()` a
-non-instantaneous function.
-    
+non-instantaneous function.  
 ```python
 from sim import simulator
 def accept_conns(socket):
-    socket1 = socket.accept()
+    socket1 = yield socket.accept()
     simulator.new_thread(handle_conn(socket1))
 
 def handle_conn(socket):
