@@ -19,7 +19,9 @@ def harmonic_mean(*numbers):
 
 (2) Non-instantaneous - Define a generator instead of a function. To make other calls to
 non-instantaneous function, use `yield`. You may also use `yield` to collect the return value of
-the call. Return values as normal. (As usual, no return value returns `None`.)
+the call. Return values as normal. (As usual, no return value returns `None`.) **CORRECTION: This
+is a feature of Python 3.3...this will have to be ported to 3.3 to take advantage of return values.
+**
 ```python
 def accept_one_conn(socket):
     socket1 = yield socket.accept()
